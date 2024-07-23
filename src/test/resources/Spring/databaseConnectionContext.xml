@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+       default-autowire="byName">
+
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:locators/*.properties" ignore-resource-not-found="true"/>
+
+
+    <bean id="jsonHelper" class="appmanager.util.json.JSONHelper" scope="prototype"/>
+    <bean id="helperBase" class="appmanager.HelperBase"/>
+    <bean id="Blazedeompage" class="TestProjectPages.Blazedeompage"/>
+    <bean id="Loginpage" class="TestProjectPages.Loginpage"/>
+
+
+
+
+    <!-- Database connection bean classes which implements JdbcTemplate class-->
+    <bean id="myJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="sonarDataSource"/>
+    </bean>
+    <bean id="MaintenanceDAO" class="TestProjectDAO.MaintenanceDAO">
+        <constructor-arg ref="myJdbcTemplate"/>
+    </bean>
+
+
+    <!-- Database connections which can be accessed by defining the profile name in TestBase class -->
+    <beans profile="DB1">
+        <bean id="sonarDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+            <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+            <property name="url" value="jdbc:sqlserver://WS-ENTDBD30;databaseName=prod01"/>
+            <property name="username" value="boproduser"/>
+            <property name="password" value="ascend24"/>
+            <property name="initialSize" value="2"/>
+            <property name="maxTotal" value="10"/>
+        </bean>
+    </beans>
+    <beans profile="DB2">
+        <bean id="safekeepingDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+            <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+            <property name="url" value="jdbc:sqlserver://WS-ENTDBD80;"/>
+            <property name="username" value="boproduser"/>
+            <property name="password" value="ascend24"/>
+            <property name="initialSize" value="2"/>
+            <property name="maxTotal" value="10"/>
+        </bean>
+    </beans>
+</beans>
